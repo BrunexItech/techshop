@@ -1,100 +1,383 @@
-import React, { useState } from 'react';
-import { Tabs, Tab, Box, Typography, Grid, Card, CardContent, CardMedia } from '@mui/material';
+import React, { useEffect, useRef, useState } from "react";
+import { MdHeadsetMic } from "react-icons/md";
+import { BsCart3 } from "react-icons/bs";
+import { FaRegUser } from "react-icons/fa";
+import { AiOutlineSearch } from "react-icons/ai";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { Link } from "react-router-dom";
+import logo from "../assets/logo.svg";
 
-const accessoriesData = {
-  chargers: [
-    { name: 'Amaya Fast Charger 20W', price: 'KSh 1,200', description: 'Fast charging USB-C charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'Anker PowerPort 30W', price: 'KSh 2,500', description: 'Compact wall charger with 30W output.', image: 'https://via.placeholder.com/150' },
-    { name: 'Samsung 25W Super Fast Charger', price: 'KSh 2,800', description: 'Official Samsung fast charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'Oraimo 18W Charger', price: 'KSh 1,000', description: 'Affordable fast charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'UGreen 20W USB-C Charger', price: 'KSh 1,700', description: 'Small and portable charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'Baseus 30W GaN Charger', price: 'KSh 2,900', description: 'High-speed GaN charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'Xiaomi 33W Charger', price: 'KSh 2,300', description: 'Fast charger for Xiaomi phones.', image: 'https://via.placeholder.com/150' },
-    { name: 'Apple 20W USB-C Charger', price: 'KSh 3,500', description: 'Official Apple fast charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'Huawei 40W SuperCharge', price: 'KSh 3,200', description: 'Huawei certified fast charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'OnePlus Warp Charger 30W', price: 'KSh 2,800', description: 'Official OnePlus charger.', image: 'https://via.placeholder.com/150' },
-    { name: 'Realme 30W Dart Charger', price: 'KSh 2,100', description: 'Fast charging for Realme phones.', image: 'https://via.placeholder.com/150' },
-    { name: 'Amaya Quick Charger 18W', price: 'KSh 1,100', description: 'Affordable fast charging option.', image: 'https://via.placeholder.com/150' },
-  ],
-  powerbanks: [
-    { name: 'Anker PowerCore 10000', price: 'KSh 3,500', description: 'Compact 10000mAh powerbank.', image: 'https://via.placeholder.com/150' },
-    { name: 'Amaya 20000mAh PB', price: 'KSh 4,500', description: 'High capacity powerbank.', image: 'https://via.placeholder.com/150' },
-    { name: 'Xiaomi 10000mAh PB', price: 'KSh 3,200', description: 'Fast charging portable power.', image: 'https://via.placeholder.com/150' },
-    { name: 'Oraimo 10000mAh PB', price: 'KSh 2,900', description: 'Reliable powerbank for daily use.', image: 'https://via.placeholder.com/150' },
-    { name: 'UGreen 20000mAh PB', price: 'KSh 5,000', description: 'Dual output high capacity PB.', image: 'https://via.placeholder.com/150' },
-    { name: 'Baseus 10000mAh PB', price: 'KSh 3,300', description: 'Compact and portable.', image: 'https://via.placeholder.com/150' },
-    { name: 'Samsung 10000mAh PB', price: 'KSh 4,000', description: 'Official Samsung powerbank.', image: 'https://via.placeholder.com/150' },
-    { name: 'Apple 10000mAh PB', price: 'KSh 5,500', description: 'High-quality Apple powerbank.', image: 'https://via.placeholder.com/150' },
-    { name: 'Realme 10000mAh PB', price: 'KSh 3,100', description: 'Affordable fast charging PB.', image: 'https://via.placeholder.com/150' },
-    { name: 'Huawei 20000mAh PB', price: 'KSh 5,200', description: 'High-capacity Huawei powerbank.', image: 'https://via.placeholder.com/150' },
-    { name: 'OnePlus 10000mAh PB', price: 'KSh 4,200', description: 'Official OnePlus fast PB.', image: 'https://via.placeholder.com/150' },
-    { name: 'Amaya 10000mAh PB', price: 'KSh 3,000', description: 'Reliable and affordable.', image: 'https://via.placeholder.com/150' },
-  ],
-  phonecovers: [
-    { name: 'iPhone 14 Silicone Case', price: 'KSh 1,200', description: 'Soft and protective cover.', image: 'https://via.placeholder.com/150' },
-    { name: 'Samsung Galaxy S23 Case', price: 'KSh 1,500', description: 'Durable TPU case.', image: 'https://via.placeholder.com/150' },
-    { name: 'Xiaomi Redmi Note 12 Cover', price: 'KSh 1,000', description: 'Stylish protective case.', image: 'https://via.placeholder.com/150' },
-    { name: 'Oraimo Flexible Case', price: 'KSh 900', description: 'Affordable soft TPU case.', image: 'https://via.placeholder.com/150' },
-    { name: 'Huawei P50 Case', price: 'KSh 1,300', description: 'Slim protective phone cover.', image: 'https://via.placeholder.com/150' },
-    { name: 'OnePlus Nord Case', price: 'KSh 1,100', description: 'Shockproof TPU case.', image: 'https://via.placeholder.com/150' },
-    { name: 'Realme 10 Pro Cover', price: 'KSh 950', description: 'Flexible and durable cover.', image: 'https://via.placeholder.com/150' },
-    { name: 'Samsung Galaxy A53 Cover', price: 'KSh 1,050', description: 'Slim TPU phone case.', image: 'https://via.placeholder.com/150' },
-    { name: 'iPhone 13 Leather Case', price: 'KSh 2,500', description: 'Premium leather protective case.', image: 'https://via.placeholder.com/150' },
-    { name: 'Huawei P40 Pro Case', price: 'KSh 1,500', description: 'Stylish protective cover.', image: 'https://via.placeholder.com/150' },
-    { name: 'Xiaomi Poco X4 Pro Case', price: 'KSh 1,100', description: 'Durable TPU case.', image: 'https://via.placeholder.com/150' },
-    { name: 'iPhone SE Cover', price: 'KSh 800', description: 'Affordable protective cover.', image: 'https://via.placeholder.com/150' },
-  ],
-  protectors: [
-    { name: 'iPhone 14 Tempered Glass', price: 'KSh 900', description: 'Anti-scratch screen protector.', image: 'https://via.placeholder.com/150' },
-    { name: 'Samsung Galaxy S23 Glass', price: 'KSh 1,100', description: 'High clarity tempered glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'Xiaomi Redmi Note 12 Glass', price: 'KSh 800', description: 'Strong tempered glass protector.', image: 'https://via.placeholder.com/150' },
-    { name: 'Oraimo Screen Protector', price: 'KSh 700', description: 'Affordable tempered glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'Huawei P50 Glass', price: 'KSh 950', description: 'Full coverage tempered glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'OnePlus Nord Glass', price: 'KSh 850', description: 'Scratch-resistant tempered glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'Realme 10 Pro Protector', price: 'KSh 750', description: 'Durable tempered glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'Samsung Galaxy A53 Protector', price: 'KSh 800', description: 'Affordable anti-scratch glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'iPhone 13 Tempered Glass', price: 'KSh 1,200', description: 'Premium screen protection.', image: 'https://via.placeholder.com/150' },
-    { name: 'Huawei P40 Pro Glass', price: 'KSh 900', description: 'High clarity tempered glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'Xiaomi Poco X4 Pro Glass', price: 'KSh 850', description: 'Strong protective tempered glass.', image: 'https://via.placeholder.com/150' },
-    { name: 'iPhone SE Glass Protector', price: 'KSh 700', description: 'Affordable screen protection.', image: 'https://via.placeholder.com/150' },
-  ],
-};
+// Small helper components ----------------------------------------------------
+const DropdownCard = ({ children, className = "" }) => (
+  <div
+    className={`absolute top-full right-0 mt-2 w-72 bg-white border rounded-lg shadow-lg p-4 z-50 ${className}`}
+    role="dialog"
+  >
+    {children}
+  </div>
+);
 
-const MobileAccessories = () => {
-  const [selectedCategory, setSelectedCategory] = useState('chargers');
+const AuthForms = ({ isLogin, onToggle }) => (
+  <>
+    {isLogin ? (
+      <form className="space-y-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <input
+            type="email"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-500"
+            placeholder="you@example.com"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            type="password"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-500"
+            placeholder="••••••••"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-sm"
+        >
+          Login
+        </button>
+      </form>
+    ) : (
+      <form className="space-y-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-500"
+            placeholder="Your Name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <input
+            type="email"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-500"
+            placeholder="you@example.com"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            type="password"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-500"
+            placeholder="••••••••"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <input
+            type="password"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-500"
+            placeholder="••••••••"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-sm"
+        >
+          Sign up
+        </button>
+      </form>
+    )}
+    <p className="text-sm text-center mt-3 text-gray-600">
+      {isLogin ? "Don’t have an account? " : "Already have an account? "}
+      <button
+        type="button"
+        className="text-blue-600 hover:underline cursor-pointer"
+        onClick={onToggle}
+      >
+        {isLogin ? "Sign up" : "Login"}
+      </button>
+    </p>
+  </>
+);
+
+const CartBody = () => (
+  <div className="space-y-3">
+    <div className="flex justify-between">
+      <p className="text-sm font-medium">Item 1</p>
+      <p className="text-sm font-medium">KSh 1000</p>
+    </div>
+    <div className="flex justify-between">
+      <p className="text-sm font-medium">Item 2</p>
+      <p className="text-sm font-medium">KSh 2000</p>
+    </div>
+    <div className="flex justify-between">
+      <p className="text-sm font-medium">Item 3</p>
+      <p className="text-sm font-medium">KSh 3000</p>
+    </div>
+    <div className="flex justify-between border-t pt-3">
+      <p className="text-sm font-medium">Total</p>
+      <p className="text-sm font-medium">KSh 6000</p>
+    </div>
+    <div className="flex gap-2 mt-3">
+      <button className="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-sm">
+        View Cart
+      </button>
+      <button className="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-sm">
+        Checkout
+      </button>
+    </div>
+  </div>
+);
+
+// Main component -------------------------------------------------------------
+const Header = () => {
+  // UI state
+  const [isLogin, setIsLogin] = useState(true);
+  const [desktop, setDesktop] = useState({ accountOpen: false, cartOpen: false });
+  const [mobile, setMobile] = useState({ menuOpen: false, accountOpen: false, cartOpen: false });
+
+  // Refs for outside-click handling
+  const accountRef = useRef(null);
+  const cartRef = useRef(null);
+  const mobileAccountRef = useRef(null);
+  const mobileCartRef = useRef(null);
+
+  const closeAll = () => {
+    setDesktop({ accountOpen: false, cartOpen: false });
+    setMobile((m) => ({ ...m, accountOpen: false, cartOpen: false }));
+  };
+
+  // Outside click + ESC to close
+  useEffect(() => {
+    const onDown = (e) => {
+      const targets = [accountRef.current, cartRef.current, mobileAccountRef.current, mobileCartRef.current];
+      const clickedInside = targets.some((el) => el && el.contains(e.target));
+      if (!clickedInside) closeAll();
+    };
+    const onEsc = (e) => {
+      if (e.key === "Escape") closeAll();
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, []);
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Tabs
-        value={selectedCategory}
-        onChange={(e, val) => setSelectedCategory(val)}
-        centered
-        variant="scrollable"
-        scrollButtons="auto"
-      >
-        <Tab label="Chargers" value="chargers" />
-        <Tab label="Powerbanks" value="powerbanks" />
-        <Tab label="Phone Covers" value="phonecovers" />
-        <Tab label="Protectors" value="protectors" />
-      </Tabs>
-      <Box sx={{ p: 3 }}>
-        <Grid container spacing={2}>
-          {accessoriesData[selectedCategory].map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card sx={{ maxWidth: 345, transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
-                <CardMedia component="img" height="140" image={item.image} alt={item.name} />
-                <CardContent>
-                  <Typography variant="h6">{item.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">{item.description}</Typography>
-                  <Typography variant="body1" color="text.primary">{item.price}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </Box>
+    <header className="w-full shadow-sm border-b">
+      {/* Desktop Header */}
+      <div className="hidden md:flex container mx-auto px-3 pt-1 pb-0 items-center justify-between bg-white">
+        <img src={logo} alt="Jontech logo" className="h-40 w-auto" />
+
+        {/* Search Bar */}
+        <div className="flex flex-1 max-w-2xl mx-8">
+          <select className="border border-blue-700 text-sm py-2 rounded-l-md focus:outline-none">
+            <option>All Categories</option>
+            <option>Smartphones</option>
+            <option>Airpods</option>
+            <option>Headphones</option>
+            <option>Chargers</option>
+            <option>Television</option>
+            <option>Screen Protectors</option>
+            <option>Phone Covers</option>
+            <option>Speakers</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Search for products..."
+            className="flex-1 border-t border-b border-blue-600 px-4 py-2 focus:outline-none"
+          />
+          <button className="bg-blue-700 text-white px-4 py-2 rounded-r-md hover:bg-blue-800 transition">
+            Search
+          </button>
+        </div>
+
+        {/* Top right icons */}
+        <div className="flex items-center space-x-6 text-sm">
+          <div className="flex items-center space-x-2">
+            <MdHeadsetMic className="text-2xl text-blue-600" />
+            <div>
+              <p className="text-gray-500">Need Help?</p>
+              <p className="text-blue-600 font-semibold">0795299451</p>
+            </div>
+          </div>
+
+          {/* Account (Desktop) */}
+          <div className="relative" ref={accountRef}>
+            <button
+              onClick={() => setDesktop((d) => ({ accountOpen: !d.accountOpen, cartOpen: false }))}
+              className="flex items-center space-x-2 hover:text-blue-800 transition cursor-pointer"
+              aria-haspopup="dialog"
+              aria-expanded={desktop.accountOpen}
+            >
+              <FaRegUser className="text-2xl" />
+              <div className="text-left">
+                <p className="text-gray-600 text-sm">My Account</p>
+                <p className="font-semibold text-sm">{isLogin ? "Login" : "Sign up"}</p>
+              </div>
+            </button>
+
+            {desktop.accountOpen && (
+              <DropdownCard>
+                <AuthForms isLogin={isLogin} onToggle={() => setIsLogin((v) => !v)} />
+              </DropdownCard>
+            )}
+          </div>
+
+          {/* Cart (Desktop) */}
+          <div className="relative" ref={cartRef}>
+            <button
+              onClick={() => setDesktop((d) => ({ accountOpen: false, cartOpen: !d.cartOpen }))}
+              className="relative flex items-center space-x-2 cursor-pointer hover:text-blue-800 transition"
+              aria-haspopup="dialog"
+              aria-expanded={desktop.cartOpen}
+            >
+              <div className="relative pr-1">
+                <BsCart3 className="text-2xl" />
+                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 rounded-full">
+                  0
+                </span>
+              </div>
+              <div className="text-sm pl-1 text-left">
+                <p className="text-gray-600">My Cart</p>
+                <p className="font-semibold">(KSh 0)</p>
+              </div>
+            </button>
+
+            {desktop.cartOpen && (
+              <DropdownCard>
+                <CartBody />
+              </DropdownCard>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Navigation Menu */}
+      <nav className="hidden md:block w-full border-t shadow-sm bg-white">
+        <div className="container mx-auto px-4 py-2 flex flex-wrap gap-x-6">
+          <Link to="" className="text-gray-900 hover:text-blue-600 font-medium">
+            Home
+          </Link>
+          <Link to="/smartphones" className="text-gray-900 hover:text-blue-600 font-medium">
+            Smart Phones
+          </Link>
+          <Link to="/mkopa" className="text-gray-900 hover:text-blue-600 font-medium">
+            M-Kopa Phones
+          </Link>
+          <Link to="/televisions" className="text-gray-900 hover:text-blue-600 font-medium">
+            Televisions
+          </Link>
+          <Link to="/mobile-accessories" className="text-gray-900 hover:text-blue-600 font-medium">
+            Mobile Accessories
+          </Link>
+          <Link to="/laptops" className="text-gray-900 hover:text-blue-600 font-medium">
+            Laptops
+          </Link>
+          <Link to="/tablets" className="text-gray-900 hover:text-blue-600 font-medium">
+            Tablets
+          </Link>
+          <Link to="/audio" className="text-gray-900 hover:text-blue-600 font-medium">
+            Audio
+          </Link>
+          <Link to="/storage" className="text-gray-900 hover:text-blue-600 font-medium">
+            Storage Devices
+          </Link>
+        </div>
+      </nav>
+
+      {/* Mobile Header */}
+      <div className="md:hidden bg-gray-100 flex items-center justify-between px-4 py-2">
+        <img src={logo} alt="Jontech Logo" className="h-10" />
+
+        <div className="flex items-center gap-5 text-xl">
+          <button aria-label="Search" className="cursor-pointer text-blue-500">
+            <AiOutlineSearch />
+          </button>
+
+          <button
+            className="cursor-pointer text-blue-500"
+            aria-expanded={mobile.menuOpen}
+            aria-controls="mobile-nav"
+            onClick={() => setMobile((m) => ({ ...m, menuOpen: !m.menuOpen }))}
+          >
+            <GiHamburgerMenu />
+          </button>
+
+          {/* Account (Mobile) */}
+          <div className="relative" ref={mobileAccountRef}>
+            <button
+              className="cursor-pointer text-blue-500"
+              aria-haspopup="dialog"
+              aria-expanded={mobile.accountOpen}
+              onClick={() => setMobile((m) => ({ ...m, accountOpen: !m.accountOpen, cartOpen: false }))}
+            >
+              <FaRegUser />
+            </button>
+            {mobile.accountOpen && (
+              <DropdownCard className="left-auto right-0 w-[92vw] max-w-sm">
+                <AuthForms isLogin={isLogin} onToggle={() => setIsLogin((v) => !v)} />
+              </DropdownCard>
+            )}
+          </div>
+
+          {/* Cart (Mobile) */}
+          <div className="relative" ref={mobileCartRef}>
+            <button
+              className="cursor-pointer text-blue-500 relative"
+              aria-haspopup="dialog"
+              aria-expanded={mobile.cartOpen}
+              onClick={() => setMobile((m) => ({ ...m, cartOpen: !m.cartOpen, accountOpen: false }))}
+            >
+              <BsCart3 />
+              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 rounded-full">
+                0
+              </span>
+            </button>
+            {mobile.cartOpen && (
+              <DropdownCard className="left-auto right-0 w-[92vw] max-w-sm">
+                <CartBody />
+              </DropdownCard>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Menu */}
+      {mobile.menuOpen && (
+        <div id="mobile-nav" className="md:hidden bg-yellow-100 px-6 py-4 space-y-3 shadow-md border-t">
+          <Link to="" className="text-gray-900 hover:text-blue-600 font-medium">
+            Home
+          </Link>
+          <Link to="/smartphones" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            Smart Phones
+          </Link>
+          <Link to="/mkopa" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            M-Kopa Phones
+          </Link>
+          <Link to="/televisions" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            Televisions
+          </Link>
+          <Link to="/mobile-accessories" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            Mobile Accessories
+          </Link>
+          <Link to="/laptops" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            Laptops
+          </Link>
+          <Link to="/tablets" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            Tablets
+          </Link>
+          <Link to="/audio" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            Audio
+          </Link>
+          <Link to="/storage" className="block text-gray-900 hover:text-blue-600 font-medium transition duration-200">
+            Storage Devices
+          </Link>
+        </div>
+      )}
+    </header>
   );
 };
 
-export default MobileAccessories;
+export default Header;
